@@ -17,16 +17,22 @@ struct APIKey {
 #[tokio::main]
 async fn main() {
 
+    let mut icao: String;
+    let api_key: String;
+    let url: String;
+    let metar: String;
 
     println!("Get API key...");
-    let api_key = read_api_key();
+    api_key = read_api_key();
+
+    println!("Determine airport ICAO code...");
+    icao = "EDTY".to_string();
+    println!("Code: {}", &icao);
 
     
-    let metar_string: &str = "https://api.checkwx.com/metar/EDTY?x-api-key=";
+    url = create_url(&icao, &api_key);
 
-    let answer = metar_string.to_string() + &api_key;
-
-    let reply = read_metar_text(&answer).await;
+    let reply = read_metar_text(&url).await;
 
     let res: String = match reply {
         Ok(v) => v,
@@ -37,8 +43,8 @@ async fn main() {
 
     let object: MetarData = serde_json::from_str(&res).unwrap();
 
-    let metar = object.data;
-    println!("This is the METAR: {}", metar[0]);
+    metar = object.data[0].to_string();
+    println!("This is the METAR: {}", metar);
 
 
 }
@@ -84,4 +90,12 @@ fn read_api_key() -> String{
     return key;
 
     // `file` goes out of scope, and the "hello.txt" file gets closed
+}
+
+
+fn create_url(icao: &String, api_key: &String) -> String {
+    
+    let mut url: String = "https://api.checkwx.com/metar/".to_string() + &icao + "?x-api-key=" + &api_key;
+
+    return url;
 }

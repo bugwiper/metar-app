@@ -4,3 +4,4 @@ IDE: Visual Studio Code
 
 A free account for the aviation weather api is necessary to get a personal key:
 https://www.checkwxapi.com
+Add this key to src/api_key.json

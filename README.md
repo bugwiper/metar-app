@@ -1,0 +1,1 @@
+This is little rust application to show aviation weather in METAR format (METeorological Aerodrome Report) for specific airports. This project is mainly for training purpose to step into the world of Rust

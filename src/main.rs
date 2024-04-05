@@ -1,3 +1,4 @@
+use reqwest::Response;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::prelude::*;
@@ -25,40 +26,44 @@ async fn main() {
     println!("Get API key...");
     api_key = read_api_key();
 
-    println!("Determine airport ICAO code...");
+    print!("Determine Schwäbisch Hall airport ICAO code... ");
     icao = "EDTY".to_string();
-    println!("Code: {}", &icao);
+    println!("{}", &icao);
 
     
     url = create_url(&icao, &api_key);
 
-    let reply = read_metar_text(&url).await;
+    metar = read_metar_text(&url).await;
 
-    let res: String = match reply {
-        Ok(v) => v,
-        Err(_e) => return,
-      };
-
-    // Convert into JSON object
-
-    let object: MetarData = serde_json::from_str(&res).unwrap();
-
-    metar = object.data[0].to_string();
     println!("This is the METAR: {}", metar);
 
 
 }
 
-async fn read_metar_text(input: &String) -> Result <String, reqwest::Error> {
+async fn read_metar_text(input: &String) -> String {
 
     println!("Read metar in text...");
     // Perform the HTTP request
     let response =  reqwest::get(input)
-        .await?
+        .await
+        .unwrap()
         .text()
-        .await?;  
+        .await;  
 
-    return Ok(response);
+     //let res = response.unwrap();
+
+     let res = match response {
+        Ok(v) => v,
+        Err(_err) => return "no metar found".to_string(),
+     };
+
+    // Convert into JSON object 
+
+    let object: MetarData = serde_json::from_str(&res).unwrap();
+
+    let metar = object.data[0].to_string();
+
+    return metar;
 }
 
 fn read_api_key() -> String{
@@ -77,7 +82,7 @@ fn read_api_key() -> String{
     let mut s = String::new();
     match file.read_to_string(&mut s) {
         Err(why) => panic!("couldn't read {}: {}", display, why),
-        Ok(_) => print!("API-key from file: "),
+        Ok(_) => (),
     }
 
     //Convert into JSON object
@@ -85,7 +90,6 @@ fn read_api_key() -> String{
     let object: APIKey = serde_json::from_str(&s).unwrap();
 
     let key = object.api_key;
-    println!("{}", &key);
 
     return key;
 
@@ -95,7 +99,7 @@ fn read_api_key() -> String{
 
 fn create_url(icao: &String, api_key: &String) -> String {
     
-    let mut url: String = "https://api.checkwx.com/metar/".to_string() + &icao + "?x-api-key=" + &api_key;
+    let url: String = "https://api.checkwx.com/metar/".to_string() + &icao + "?x-api-key=" + &api_key;
 
     return url;
 }

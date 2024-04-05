@@ -36,7 +36,7 @@ async fn main() {
 
     /* Determine metar code for station */
     url = create_metar_url(&icao, &api_key);
-    metar = read_metar_text(&url).await;
+    metar = libs::metar::read_metar_text(&url).await;
 
     /* Print result */
     println!("The current METAR for {} is {}", station, metar);
@@ -44,36 +44,7 @@ async fn main() {
 
 }
 
-async fn read_metar_text(input: &String) -> String {
 
-    #[derive(Serialize, Deserialize, Debug)]
-    struct MetarData {
-        results: i32,
-        data: [String; 1],
-    }
-
-    // Perform the HTTP request
-    let response =  reqwest::get(input)
-        .await
-        .unwrap()
-        .text()
-        .await;  
-
-     //let res = response.unwrap();
-
-     let res = match response {
-        Ok(v) => v,
-        Err(_err) => return "no metar found".to_string(),
-     };
-
-    // Convert into JSON object 
-
-    let object: MetarData = serde_json::from_str(&res).unwrap();
-
-    let metar = object.data[0].to_string();
-
-    return metar;
-}
 
 fn read_api_key() -> String{
     

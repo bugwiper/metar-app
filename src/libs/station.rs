@@ -1,6 +1,8 @@
 use serde::Deserialize; 
 use serde::Serialize;
 
+use crate::libs::api_key::read_api_key;
+
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StationData {
@@ -71,10 +73,13 @@ pub struct Region {
 
 
 
-pub async fn read_station_info(input: &String) -> String {
+pub async fn read_station_info(icao: &String) -> String {
+
+    let api_key = read_api_key();
+    let url = create_station_url(&icao, &api_key);
 
     // Perform the HTTP request
-    let response =  reqwest::get(input)
+    let response =  reqwest::get(url)
        .await
         .unwrap()
         .text()
@@ -96,4 +101,11 @@ pub async fn read_station_info(input: &String) -> String {
     let name = object.data[0].name.to_string() + " " + &object.data[0].city;
 
     return name;
+}
+
+fn create_station_url(icao: &String, api_key: &String) -> String {
+
+    let url: String = "https://api.checkwx.com/station/".to_string() + &icao + "?x-api-key=" + &api_key;
+
+    return url;
 }

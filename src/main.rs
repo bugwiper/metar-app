@@ -1,6 +1,5 @@
 mod libs;
 
-use reqwest::Response;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::prelude::*;
@@ -32,11 +31,11 @@ async fn main() {
     
     /* Determine station name */
     url = create_station_url(&icao, &api_key);
-    station = libs::station::read_station_info(&url).await;
+    station = libs::station::read_station_info(&icao).await;
 
     /* Determine metar code for station */
     url = create_metar_url(&icao, &api_key);
-    metar = libs::metar::read_metar_text(&url).await;
+    metar = libs::metar::read_metar_text(&icao).await;
 
     /* Print result */
     println!("The current METAR for {} is {}", station, metar);

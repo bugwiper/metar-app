@@ -1,14 +1,13 @@
+mod libs;
+
 use reqwest::Response;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug)]
-struct MetarData {
-    results: i32,
-    data: [String; 1],
-}
+
+
 
 #[derive(Serialize, Deserialize, Debug)]
 struct APIKey {
@@ -20,29 +19,39 @@ async fn main() {
 
     let mut icao: String;
     let api_key: String;
-    let url: String;
+    let mut url: String;
     let metar: String;
+    let station: String;
 
-    println!("Get API key...");
+    /* Get API key */
     api_key = read_api_key();
 
-    print!("Determine Schwäbisch Hall airport ICAO code... ");
+    /* Determine ICAO code for target airport */
     icao = "EDTY".to_string();
-    println!("{}", &icao);
 
     
-    url = create_url(&icao, &api_key);
+    /* Determine station name */
+    url = create_station_url(&icao, &api_key);
+    station = libs::station::read_station_info(&url).await;
 
+    /* Determine metar code for station */
+    url = create_metar_url(&icao, &api_key);
     metar = read_metar_text(&url).await;
 
-    println!("This is the METAR: {}", metar);
+    /* Print result */
+    println!("The current METAR for {} is {}", station, metar);
 
 
 }
 
 async fn read_metar_text(input: &String) -> String {
 
-    println!("Read metar in text...");
+    #[derive(Serialize, Deserialize, Debug)]
+    struct MetarData {
+        results: i32,
+        data: [String; 1],
+    }
+
     // Perform the HTTP request
     let response =  reqwest::get(input)
         .await
@@ -97,9 +106,16 @@ fn read_api_key() -> String{
 }
 
 
-fn create_url(icao: &String, api_key: &String) -> String {
+fn create_metar_url(icao: &String, api_key: &String) -> String {
     
     let url: String = "https://api.checkwx.com/metar/".to_string() + &icao + "?x-api-key=" + &api_key;
+
+    return url;
+}
+
+fn create_station_url(icao: &String, api_key: &String) -> String {
+
+    let url: String = "https://api.checkwx.com/station/".to_string() + &icao + "?x-api-key=" + &api_key;
 
     return url;
 }

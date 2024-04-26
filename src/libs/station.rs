@@ -22,6 +22,7 @@ pub struct Daum {
     pub longitude: Longitude,
     pub location: String,
     pub name: String,
+    #[serde(default = "default_region")]
     pub region: Region,
     pub status: String,
     #[serde(rename = "type")]
@@ -108,4 +109,14 @@ fn create_station_url(icao: &String, api_key: &String) -> String {
     let url: String = "https://api.checkwx.com/station/".to_string() + &icao + "?x-api-key=" + &api_key;
 
     return url;
+}
+
+fn default_region() -> Region {
+
+    let region0 = Region {
+        code: "unknown".to_string(),
+        name: "unknown".to_string()
+    };
+
+    return region0
 }

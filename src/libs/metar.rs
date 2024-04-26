@@ -150,7 +150,16 @@ pub async fn read_metar_text(icao: &String) -> String {
         Err(_err) => return "no metar found".to_string(),
      };
 
+    // Check if results is not 0
+    if res.contains(":0"){
+        let blank_metar = "no metar available".to_string();
+        return blank_metar
+
+    }
+    
     // Convert into JSON object 
+
+    // TODO: results = 0 -> No unwrapping into MetarText allowed because no data is available
 
     let object: MetarText = serde_json::from_str(&res).unwrap();
 

@@ -111,15 +111,15 @@ pub struct Visibility {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Wind {
-    pub degrees: i64,
+    pub degrees: u16,
     #[serde(rename = "speed_kph")]
-    pub speed_kph: i64,
+    pub speed_kph: u16,
     #[serde(rename = "speed_kts")]
-    pub speed_kts: i64,
+    pub speed_kts: u16,
     #[serde(rename = "speed_mph")]
-    pub speed_mph: i64,
+    pub speed_mph: u16,
     #[serde(rename = "speed_mps")]
-    pub speed_mps: i64,
+    pub speed_mps: u16,
 }
 
 pub async fn get_wind(icao: &String) -> String {
@@ -168,7 +168,7 @@ pub async fn read_metar_text(icao: &String) -> String {
     return metar;
 }
 
-async fn read_metar_data(icao: &String) -> MetarData {
+pub async fn read_metar_data(icao: &String) -> MetarData {
 
     let api_key = read_api_key();
     let url = create_metar_data_url(&icao, &api_key);
@@ -207,4 +207,12 @@ fn create_metar_data_url(icao: &String, api_key: &String) -> String {
     let url: String = "https://api.checkwx.com/metar/".to_string() + &icao + "/decoded?x-api-key=" + &api_key;
 
     return url;
+}
+
+pub async fn update(icao: &String) -> String {
+    let object: MetarData= read_metar_data(&icao).await;
+
+    let wind = object.data[0].wind.speed_kph.to_string();
+
+    return wind
 }

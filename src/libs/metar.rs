@@ -50,6 +50,7 @@ pub struct Barometer {
 pub struct Cloud {
     pub code: String,
     pub text: String,
+    pub feet: u16,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -205,6 +206,9 @@ fn create_metar_text_url(icao: &String, api_key: &String) -> String {
 fn create_metar_data_url(icao: &String, api_key: &String) -> String {
     
     let url: String = "https://api.checkwx.com/metar/".to_string() + &icao + "/decoded?x-api-key=" + &api_key;
+
+    /* DEBUG */
+    println!("API_Key: {}", url);
 
     return url;
 }

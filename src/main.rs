@@ -49,7 +49,7 @@ async fn collect_static_metar_list() {
 
 fn debug_print(input: airport::Airport){
     
-    println!("Debug airport:");
+    println!("\nDebug airport:");
     println!("{}", input.icao);
     println!("{}:{}z", input.utc_hour, input.utc_minute);
     println!("Q{}", input.qnh);
@@ -59,7 +59,7 @@ fn debug_print(input: airport::Airport){
     println!("temp {}/{}", input.temperature, input.dewpoint);
     println!("vis {}", input.visibility);
     for elem in input.clouds{
-        println!("cloud: {} in {}", elem.class, elem.height);
+        println!("cloud: {} in {}", elem.class, elem.base);
     }
 
 }

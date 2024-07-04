@@ -123,7 +123,7 @@ pub struct Wind {
     pub speed_mps: u16,
 }
 
-pub async fn get_wind(icao: &String) -> String {
+pub async fn _get_wind(icao: &String) -> String {
     let object: MetarData= read_metar_data(&icao).await;
 
     let wind = object.data[0].wind.speed_kph.to_string();
@@ -132,10 +132,10 @@ pub async fn get_wind(icao: &String) -> String {
 }
     
 
-pub async fn read_metar_text(icao: &String) -> String {
+pub async fn _read_metar_text(icao: &String) -> String {
 
     let api_key = read_api_key();
-    let url = create_metar_text_url(&icao, &api_key);
+    let url = _create_metar_text_url(&icao, &api_key);
 
     // Perform the HTTP request
     let response =  reqwest::get(url)
@@ -196,7 +196,7 @@ pub async fn read_metar_data(icao: &String) -> MetarData {
     return object;
 }
 
-fn create_metar_text_url(icao: &String, api_key: &String) -> String {
+fn _create_metar_text_url(icao: &String, api_key: &String) -> String {
     
     let url: String = "https://api.checkwx.com/metar/".to_string() + &icao + "?x-api-key=" + &api_key;
 
@@ -213,7 +213,7 @@ fn create_metar_data_url(icao: &String, api_key: &String) -> String {
     return url;
 }
 
-pub async fn update(icao: &String) -> String {
+pub async fn _update(icao: &String) -> String {
     let object: MetarData= read_metar_data(&icao).await;
 
     let wind = object.data[0].wind.speed_kph.to_string();

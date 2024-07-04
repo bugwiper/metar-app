@@ -1,5 +1,4 @@
 mod libs;
-use std::io;
 use libs::airport::Airport;
 
 use crate::libs::airport;
@@ -35,7 +34,7 @@ async fn main() {
 }
 
 
-fn debug_print(input: airport::Airport){
+fn _debug_print(input: airport::Airport){
     
     println!("\nDebug airport:");
     println!("{}", input.icao);

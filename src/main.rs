@@ -1,114 +1,53 @@
 mod libs;
-use std::io;
+use libs::airport::Airport;
+
+use crate::libs::airport;
 
 
 #[tokio::main]
 async fn main() {
 
-    collect_static_metar_list();
+    let mut airports: Vec<Airport> = Vec::new();
+    let icaos: Vec<String> = vec![
+        "EDTY".to_string(),
+        "EDDS".to_string(),
+        "EDDF".to_string(),
+        "EDDM".to_string(),
+        "EDDB".to_string(),
+    ];
+
+    /* Create airports and their METAR codes based on ICAO airport identifier */
+
+    for x in icaos.iter() {
+        let mut airport = Airport::new(&x);
+        airport = airport::update(airport).await;
+        // TODO: no internet connection
+        airports.push(airport);
+    }
+    println!("METAR list:");
+    for x in airports.iter(){
+        println!("{},", x.metar);
+    }
+
+    //debug_print(airport);
+
+}
+
+
+fn _debug_print(input: airport::Airport){
     
-    loop {  
-
-        
-
-        let icao: String;
-        let metar: String;
-        let station: String;
-        let wind: String;
-
-        
-
-        /* Get user input for ICAO code */
-        println!("Please enter ICAO code for your target airport:");
-        println!("(e.g. EDDS for Stuttgart airport)");
-        println!("(Type EXIT to exit)");
-
-        
-        // Create a mutable String to store the user input
-        let mut input = String::new();
-
-
-
-        // Read user input from the command line
-        io::stdin().read_line(&mut input)
-            .expect("Failed to read line");
-
-        let trimmed = &input[..input.len() - 1];
-        let new: String = trimmed.to_string();
-
-
-        /* Validate exit statement */
-        if &new == "EXIT" || &new == "exit" {
-            break;
-        }
-
-        /* Validate user input */
-        if !validate_user_input(&new){
-            println! ("Invalid ICAO code");
-            continue;
-        }
-
-        /* Determine ICAO code for target airport */
-        icao = new;
-
-        
-        /* Determine station name */
-
-        println!("Fetching data ...");
-        
-        station = libs::station::read_station_info(&icao).await;
-
-        /* Determine metar for station */
-        metar = libs::metar::read_metar_text(&icao).await;
-
-        if metar == "no metar available".to_string(){
-            println!("{}", metar);
-            continue;
-        }
-
-        /* Determine wind for station */
-        wind = libs::metar::get_wind(&icao).await;
-
-
-        /* Print result */
-        println!("The current METAR for {} is {}", station, metar);
-        println!("");
-        println!("The wind speed is {}kph!", wind);
-        println!("");
-        println!("");
-
-}
-
-
-}
-
-fn validate_user_input(input: &String) -> bool {
-
-    if input.len() == 4 {
-        return true 
-    } else {
-        return false
+    println!("\nDebug airport:");
+    println!("{}", input.icao);
+    println!("{}:{}z", input.utc_hour, input.utc_minute);
+    println!("Q{}", input.qnh);
+    println!("w{}/{}",input.wind_direction, input.wind_speed);
+    println!("CAVOK? {}", input.cavok);
+    println!("Confidence? {}", input.confidence);
+    println!("temp {}/{}", input.temperature, input.dewpoint);
+    println!("vis {}", input.visibility);
+    for elem in input.clouds{
+        println!("cloud: {} in {}", elem.class, elem.base);
     }
-}
-
-async fn collect_static_metar_list() {
-
-    println!{"Preparing static metar list."};
-
-    let mut icao_list: [String;6] = ["EDTY".to_string(), "EDDH".to_string(), "KJFK".to_string(), "KSFO".to_string(), "RJTT".to_string(), "VOBL".to_string()];
-
-    for x in &icao_list { 
-        /* Determine metar for station */
-        let metar = libs::metar::read_metar_text(&x).await;
-
-        if metar == "no metar available".to_string(){
-            println!("{}", metar);
-            continue;
-        }
-        println!{"METAR for static list: {}", metar};
-    }
-
-
 
 }
 

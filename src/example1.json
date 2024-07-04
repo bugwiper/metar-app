@@ -1,0 +1,75 @@
+{
+    "results": 1,
+    "data": [
+        {
+            "icao": "ENBR",
+            "barometer": {
+                "hg": 30.06,
+                "hpa": 1018,
+                "kpa": 101.79,
+                "mb": 1017.95
+            },
+            "clouds": [
+                {
+                    "base_feet_agl": 3500,
+                    "base_meters_agl": 1067,
+                    "code": "SCT",
+                    "text": "Scattered",
+                    "feet": 3500,
+                    "meters": 1067
+                },
+                {
+                    "base_feet_agl": 4500,
+                    "base_meters_agl": 1372,
+                    "code": "SCT",
+                    "text": "Scattered",
+                    "feet": 4500,
+                    "meters": 1372
+                }
+            ],
+            "dewpoint": {
+                "celsius": 12,
+                "fahrenheit": 54
+            },
+            "elevation": {
+                "feet": 161,
+                "meters": 49
+            },
+            "flight_category": "VFR",
+            "humidity": {
+                "percent": 73
+            },
+            "observed": "2024-06-25T08:50:00",
+            "station": {
+                "geometry": {
+                    "coordinates": [
+                        5.21814,
+                        60.2934
+                    ],
+                    "type": "Point"
+                },
+                "location": "Bergen, Norway",
+                "name": "Bergen Airport, Flesland",
+                "type": "Airport"
+            },
+            "temperature": {
+                "celsius": 17,
+                "fahrenheit": 63
+            },
+            "raw_text": "ENBR 250850Z 18010KT 9999 SCT035 SCT045 17/12 Q1018 NOSIG RMK WIND 1200FT 15018KT",
+            "visibility": {
+                "miles": "Greater than 6",
+                "miles_float": 6,
+                "meters": "9,700",
+                "meters_float": 9700
+            },
+            "wind": {
+                "degrees": 180,
+                "speed_kph": 19,
+                "speed_kts": 10,
+                "speed_mph": 12,
+                "speed_mps": 5
+            }
+        }
+    ]
+}

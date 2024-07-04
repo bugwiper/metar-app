@@ -1,51 +1,39 @@
 mod libs;
 use std::io;
+use libs::airport::Airport;
+
 use crate::libs::airport;
 
 
 #[tokio::main]
 async fn main() {
 
-    let temp = "ENBR".to_string();
-     
+    let mut airports: Vec<Airport> = Vec::new();
+    let icaos: Vec<String> = vec![
+        "EDTY".to_string(),
+        "EDDS".to_string(),
+        "EDDF".to_string(),
+        "EDDM".to_string(),
+        "EDDB".to_string(),
+    ];
 
-    /* Determine metar code for target airport */
+    /* Create airports and their METAR codes based on ICAO airport identifier */
 
-    let mut my_airport = airport::Airport::new(&temp);
-    my_airport = airport::update(my_airport).await;
-    // TODO: no internet connection
-    println!("METAR: {}", my_airport.metar);
-
-    debug_print(my_airport);
-
-}
-
-fn validate_user_input(input: &String) -> bool {
-
-    if input.len() == 4 {
-        return true 
-    } else {
-        return false
+    for x in icaos.iter() {
+        let mut airport = Airport::new(&x);
+        airport = airport::update(airport).await;
+        // TODO: no internet connection
+        airports.push(airport);
     }
-}
-
-async fn collect_static_metar_list() {
-
-    println!{"Preparing static metar list."};
-
-    let mut icao_list: [String;6] = ["EDTY".to_string(), "EDDH".to_string(), "KJFK".to_string(), "KSFO".to_string(), "RJTT".to_string(), "VOBL".to_string()];
-
-    for x in &icao_list { 
-        /* Determine metar for station */
-        let metar = libs::metar::read_metar_text(&x).await;
-
-        if metar == "no metar available".to_string(){
-            println!("{}", metar);
-            continue;
-        }
-        println!{"METAR for static list: {}", metar};
+    println!("METAR list:");
+    for x in airports.iter(){
+        println!("{},", x.metar);
     }
+
+    //debug_print(airport);
+
 }
+
 
 fn debug_print(input: airport::Airport){
     
